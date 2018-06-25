@@ -300,7 +300,6 @@ namespace util {
 %unignore S1Angle::e6;
 %unignore S1Angle::e7;
 %unignore S1Angle::radians;
-%unignore S1Angle::operator+;
 %unignore S1ChordAngle;
 %unignore S1ChordAngle::ToAngle;
 %unignore S1Interval;
