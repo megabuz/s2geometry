@@ -20,6 +20,7 @@
 #include "s2/s2region_coverer.h"
 #include "s2/s2cell.h"
 #include "s2/s2cell_union.h"
+#include "s2/s2earth.h"
 %}
 
 %inline %{
@@ -123,10 +124,72 @@ std::vector<S2Polyline *> *out(std::vector<S2Polyline *> temp) {
 // difficult to wrap correctly.
 class S2Point {
  public:
+  S2Point(double x, double y, double z);
   double Norm();
   S2Point Normalize();
   ~S2Point();
 };
+
+namespace util {
+ namespace units {
+  class Meters;
+  class Kilometers;
+  class Inches;
+  class Feet;
+  class Miles;
+  class Millimeters;
+  class NauticalMiles;
+  class Yards;
+  %define UNIT_TYPE(Type)
+    class Type {
+      public:
+        Type(float value);
+        Type(Meters& value);
+        Type(Kilometers& value);
+        Type(Inches& value);
+        Type(Feet& value);
+        Type(Miles& value);
+        Type(Millimeters& value);
+        Type(NauticalMiles& value);
+        Type(Yards& value);
+        float value();
+        Type operator - () const;
+        Type operator * (const float scale) const;
+        Type operator + (const Type other) const;
+        Type operator - (const Type other) const;
+        float operator / (const Type other) const;
+        Type operator *= (const float scale);
+        Type operator += (const Type other);
+        Type operator -= (const Type other);
+
+        bool operator < (const Type other);
+        bool operator > (const Type other);
+        bool operator <= (const Type other);
+        bool operator >= (const Type other);
+
+        bool equals(const Type other,
+                    const Type epsilon) const;
+        Type abs() const;
+    };
+
+    %extend Type {
+      Type __rmul__(const float value) {
+        return *self * value;
+      }
+    }
+  %enddef
+  UNIT_TYPE(Meters)
+  UNIT_TYPE(Kilometers)
+  UNIT_TYPE(Inches)
+  UNIT_TYPE(Feet)
+  UNIT_TYPE(Miles)
+  UNIT_TYPE(Millimeters)
+  UNIT_TYPE(NauticalMiles)
+  UNIT_TYPE(Yards)
+ }
+}
+
+
 
 // The extensions below exist because of the difficulty swigging S2Point.
 
@@ -237,6 +300,7 @@ class S2Point {
 %unignore S1Angle::e6;
 %unignore S1Angle::e7;
 %unignore S1Angle::radians;
+%unignore S1Angle::operator+;
 %unignore S1ChordAngle;
 %unignore S1ChordAngle::ToAngle;
 %unignore S1Interval;
@@ -346,6 +410,35 @@ class S2Point {
 %unignore S2CellUnion::cell_id;
 %unignore S2CellUnion::cell_ids;
 %unignore S2CellUnion::num_cells;
+%unignore S2Earth;
+%unignore S2Earth::ToAngle;
+%unignore S2Earth::ToChordAngle;
+%unignore S2Earth::ToDistance;
+%unignore S2Earth::ToRadians;
+%unignore S2Earth::ToMeters;
+%unignore S2Earth::ToKm;
+%unignore S2Earth::KmToRadians;
+%unignore S2Earth::RadiansToKm;
+%unignore S2Earth::MetersToRadians;
+%unignore S2Earth::RadiansToMeters;
+%unignore S2Earth::SquareKmToSteradians;
+%unignore S2Earth::SquareMetersToSteradians;
+%unignore S2Earth::SteradiansToSquareKm;
+%unignore S2Earth::SteradiansToSquareMeters;
+%unignore S2Earth::ToLongitudeRadians;
+%unignore S2Earth::GetInitialBearing;
+%unignore S2Earth::GetDistance;
+%unignore S2Earth::GetDistanceKm;
+%unignore S2Earth::GetDistanceMeters;
+%unignore S2Earth::Radius;
+%unignore S2Earth::RadiusKm;
+%unignore S2Earth::RadiusMeters;
+%unignore S2Earth::LowestAltitude;
+%unignore S2Earth::LowestAltitudeKm;
+%unignore S2Earth::LowestAltitudeMeters;
+%unignore S2Earth::HighestAltitude;
+%unignore S2Earth::HighestAltitudeKm;
+%unignore S2Earth::HighestAltitudeMeters;
 %unignore S2LatLng;
 %unignore S2LatLng::S2LatLng;
 %unignore S2LatLng::~S2LatLng;
@@ -505,6 +598,7 @@ class S2Point {
 %include "s2/s2region_coverer.h"
 %include "s2/s2cell.h"
 %include "s2/s2cell_union.h"
+%include "s2/s2earth.h"
 
 %unignoreall
 
