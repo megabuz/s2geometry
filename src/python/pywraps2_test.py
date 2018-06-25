@@ -576,7 +576,8 @@ class PyWrapS2TestCase(unittest.TestCase):
 
         for config in test_configs:
             bearing = s2.S2Earth.GetInitialBearing(config.a, config.b)
-            self.assertAlmostEquals(bearing.degrees(), config.bearing.degrees(), places=2)
+            self.assertAlmostEquals(
+                bearing.degrees(), config.bearing.degrees(), places=2)
 
     def test2EatrthGetDistance(self):
         north = s2.S2Point(0, 0, 1)
